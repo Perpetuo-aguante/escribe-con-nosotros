@@ -493,6 +493,8 @@ const CONFIG = {
   // Webhook de n8n que recibe la propuesta (multipart/form-data) y la guarda en Notion.
   // Vacío = modo demostración: no envía nada, solo simula el envío.
   WEBHOOK_URL: "https://esperpetuo.app.n8n.cloud/webhook/escribe-con-nosotros",
+  // Respaldo sin n8n (Google Apps Script). Se usa solo si n8n falla.
+  RESPALDO_URL: "https://script.google.com/macros/s/AKfycbwT-y3gSV8uPT1GCx3CvsuJ8bUsZbu3JKWrsw-0xtJZN5kMTKIDlTw3a0akwfsg8-ABBw/exec",
   MAX_MB: 15,
   CLAVE_LOCAL: "perpetuo-escribe-borrador"
 };
@@ -803,15 +805,38 @@ function enviar(){
     let p = 4; const t = setInterval(() => { p = Math.min(96, p + 18); $("#barFill").style.width = p + "%"; if (p >= 96){ clearInterval(t); listo(); } }, 140);
     return;
   }
+  const respaldo = async () => {
+    if (!CONFIG.RESPALDO_URL) throw new Error("sin respaldo");
+    $("#barFill").style.width = "60%";
+    const payload = { ...d };
+    if (archivo) {
+      const b64 = await new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(String(r.result).split(",")[1] || "");
+        r.onerror = rej; r.readAsDataURL(archivo);
+      });
+      Object.assign(payload, { archivoBase64: b64, archivoNombre: archivo.name, archivoTipo: archivo.type });
+    }
+    const r = await fetch(CONFIG.RESPALDO_URL, { method: "POST", body: JSON.stringify(payload),
+      headers: { "Content-Type": "text/plain;charset=utf-8" } });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || "error");
+  };
+  const usarRespaldo = () => respaldo().then(listo).catch(() =>
+    fallo("No pudimos recibir tu propuesta. Intenta de nuevo en un momento o escríbenos a general@perpetuo.global."));
+
   const xhr = new XMLHttpRequest();
   xhr.open("POST", CONFIG.WEBHOOK_URL);
-  xhr.upload.onprogress = e => { if (e.lengthComputable) $("#barFill").style.width = Math.max(4, e.loaded / e.total * 96) + "%"; };
+  xhr.timeout = 45000;
+  xhr.upload.onprogress = e => { if (e.lengthComputable) $("#barFill").style.width = Math.max(4, e.loaded / e.total * 50) + "%"; };
   xhr.onload = () => {
     if (xhr.status >= 200 && xhr.status < 300) return listo();
     if (xhr.status === 413) return fallo(`El archivo es demasiado pesado. Prueba con uno de menos de ${CONFIG.MAX_MB} MB o comparte un enlace.`);
-    fallo("No pudimos recibir tu propuesta. Intenta de nuevo en un momento o escríbenos a general@perpetuo.global.");
+    if (xhr.status === 400) return fallo("Revisa tu nombre, correo y sección e intenta de nuevo.");
+    usarRespaldo();            // n8n caído o sin ejecuciones → respaldo
   };
-  xhr.onerror = () => fallo("Parece que no hay conexión. Revisa tu internet e intenta de nuevo; tus respuestas siguen aquí.");
+  xhr.onerror = usarRespaldo;  // n8n sin respuesta / bloqueo CORS → respaldo
+  xhr.ontimeout = usarRespaldo;
   xhr.send(fd);
 }
 
