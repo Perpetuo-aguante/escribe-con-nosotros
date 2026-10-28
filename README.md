@@ -11,7 +11,7 @@ Formulario para que autores manden propuestas a Perpetuo. Reemplaza al Google Fo
 2. **Sección**: El estelar, Los anteojos, El creativo, La sobremesa, Foto ensayo, Vainas varias, Diseño y arte.
 3. **Tu propuesta**: los campos cambian según la sección (son los mismos saltos que tenía el Google Form).
    - Estelar / Anteojos / Creativo: idea o texto listo, título, propuesta o archivo (Creativo pide además el género).
-   - Sobremesa (igual que el Google Form «Propuestas para la Sobremesa»): un párrafo sobre la persona, WhatsApp opcional y un primer borrador obligatorio.
+   - Sobremesa (igual que el Google Form «Propuestas para la Sobremesa»): un párrafo sobre la persona, WhatsApp y enlaces a trabajo previo (opcionales) y un primer borrador obligatorio. Si n8n falla, el formulario acomoda esos datos en título, biografía y propuesta para que el respaldo de Apps Script no pierda nada.
    - Vainas varias: descripción de 50 palabras como máximo y archivo opcional.
    - Foto ensayo: descripción de 50 palabras como máximo, más un .zip o un enlace a las fotos.
    - Diseño y arte: qué quiere hacer y su portafolio.
@@ -26,7 +26,7 @@ const CONFIG = { WEBHOOK_URL: "https://esperpetuo.app.n8n.cloud/webhook/escribe-
 Si se deja `WEBHOOK_URL` vacío, el formulario funciona en **modo demostración**: no envía nada y muestra en la consola lo que habría enviado.
 
 ### Lo que se envía al webhook
-`POST` en `multipart/form-data` con estos campos: `nombre, correo, pais, suscripcion, bio, enlace, seccion, seccionNombre, modo, titulo, genero, propuesta, descripcion, enlaceFotos, arte, portafolio, sobreTi, whatsapp, folio, fecha`. Si hay archivo, va en el campo binario `archivo`.
+`POST` en `multipart/form-data` con estos campos: `nombre, correo, pais, suscripcion, bio, enlace, seccion, seccionNombre, modo, titulo, genero, propuesta, descripcion, enlaceFotos, arte, portafolio, sobreTi, whatsapp, enlacesPrevios, folio, fecha`. Si hay archivo, va en el campo binario `archivo`.
 Cualquier respuesta 2xx cuenta como recibido; un 413 muestra el aviso de archivo demasiado pesado. El webhook debe permitir CORS desde el dominio donde se publique el formulario.
 
 ## Backend (n8n)

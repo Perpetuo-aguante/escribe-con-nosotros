@@ -418,6 +418,10 @@ footer a{ color:var(--papel); }
             <input class="input" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="+52 55 1234 5678">
             <span class="msg">Revisa el número; incluye la clave de país.</span>
           </label>
+          <label class="field" data-f="enlacesPrevios">
+            <span class="lbl">Comparte enlaces a tu trabajo previo publicado, de ser el caso <small>Opcional</small></span>
+            <textarea class="input" name="enlacesPrevios" style="min-height:96px" placeholder="Blogs, redes sociales o medios. Uno por línea."></textarea>
+          </label>
         </div>
 
         <div class="if field" data-for="estelar anteojos creativo sobremesa vv foto" data-f="archivo">
@@ -577,6 +581,8 @@ function ajustarPaso3(){
     $("[data-f=archivo]").classList.toggle("on", modo === "texto");
   }
   $("#generoOtro").classList.toggle("on", val("genero") === "Otro");
+  // el enlace del paso 1 sirve de punto de partida para los enlaces de la Sobremesa
+  if (s.id === "sobremesa" && !val("enlacesPrevios") && val("enlace")) form.elements.enlacesPrevios.value = val("enlace");
 
   const esFoto = s.id === "foto";
   $("#lblDesc").textContent = esFoto ? "Cuéntanos de tus fotografías" : "¿De qué escribiste?";
@@ -773,7 +779,7 @@ function datos(){
     suscripcion: val("suscripcion"), bio: val("bio"), enlace: val("enlace"),
     seccion: s.id, seccionNombre: s.nombre
   };
-  if (s.id === "sobremesa"){ d.sobreTi = val("sobreTi"); d.whatsapp = val("whatsapp"); }
+  if (s.id === "sobremesa"){ d.sobreTi = val("sobreTi"); d.whatsapp = val("whatsapp"); d.enlacesPrevios = val("enlacesPrevios"); }
   if (["estelar","anteojos","creativo"].includes(s.id)){
     d.modo = val("modo"); d.titulo = val("titulo"); d.propuesta = val("propuesta");
     if (s.id === "creativo") d.genero = val("genero") === "Otro" ? val("generoOtro") : val("genero");
@@ -792,7 +798,7 @@ function repaso(){
     ["Sección", d.seccionNombre, 2],
     ["Tipo", d.modo ? (d.modo === "texto" ? "Texto terminado" : "Propuesta (idea)") : "", 3],
     ["Género", d.genero, 3], ["Título", d.titulo, 3], ["Propuesta", d.propuesta, 3],
-    ["Sobre ti", d.sobreTi, 3], ["WhatsApp", d.whatsapp, 3],
+    ["Sobre ti", d.sobreTi, 3], ["WhatsApp", d.whatsapp, 3], ["Trabajo previo", d.enlacesPrevios, 3],
     ["Descripción", d.descripcion, 3], ["Qué te gustaría hacer", d.arte, 3], ["Portafolio", d.portafolio, 3],
     ["Archivo", archivo ? `${archivo.name} · ${fmtMB(archivo.size)}` : "", 3], ["Enlace a las fotos", d.enlaceFotos, 3]
   ].filter(f => f[1]);
@@ -801,6 +807,20 @@ function repaso(){
 }
 
 /* ---------- envío ---------- */
+// El respaldo (Apps Script) solo conoce los campos de siempre: título, biografía y propuesta.
+// Para que no se pierda nada de la Sobremesa, se acomoda ahí también.
+function paraRespaldo(d){
+  if (d.seccion !== "sobremesa") return {};
+  return {
+    titulo: "Propuesta para la Sobremesa · " + d.nombre,
+    bio: d.bio || d.sobreTi,
+    propuesta: [
+      "Sobre la persona:\n" + d.sobreTi,
+      d.whatsapp && "WhatsApp: " + d.whatsapp,
+      d.enlacesPrevios && "Trabajo previo publicado:\n" + d.enlacesPrevios
+    ].filter(Boolean).join("\n\n")
+  };
+}
 function folio(){ const a = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let f = ""; for (let i = 0; i < 6; i++) f += a[Math.floor(Math.random() * a.length)]; return "P-" + f; }
 function enviar(){
   const d = datos(); d.folio = folio(); d.fecha = new Date().toISOString();
@@ -833,7 +853,7 @@ function enviar(){
   const respaldo = async () => {
     if (!CONFIG.RESPALDO_URL) throw new Error("sin respaldo");
     $("#barFill").style.width = "60%";
-    const payload = { ...d };
+    const payload = { ...d, ...paraRespaldo(d) };
     if (archivo) {
       const b64 = await new Promise((res, rej) => {
         const r = new FileReader();
@@ -877,7 +897,7 @@ $("#again").addEventListener("click", () => {
 });
 
 /* ---------- borrador local ---------- */
-const CAMPOS = ["nombre","correo","pais","suscripcion","bio","enlace","seccion","modo","titulo","genero","generoOtro","propuesta","descripcion","enlaceFotos","arte","portafolio","sobreTi","whatsapp"];
+const CAMPOS = ["nombre","correo","pais","suscripcion","bio","enlace","seccion","modo","titulo","genero","generoOtro","propuesta","descripcion","enlaceFotos","arte","portafolio","sobreTi","whatsapp","enlacesPrevios"];
 function guardar(){
   try { const o = {}; CAMPOS.forEach(n => o[n] = val(n)); o.paso = Math.min(paso, 3); localStorage.setItem(CONFIG.CLAVE_LOCAL, JSON.stringify(o)); } catch {}
 }
