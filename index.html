@@ -366,7 +366,7 @@ footer a{ color:var(--papel); }
         <div class="chosen" id="chosen"></div>
 
         <!-- Idea o texto listo -->
-        <div class="if" data-for="estelar anteojos creativo sobremesa">
+        <div class="if" data-for="estelar anteojos creativo">
           <div class="field" data-f="modo" role="radiogroup" aria-labelledby="lblModo">
             <span class="lbl" id="lblModo">¿Tienes una idea o un texto terminado?</span>
             <div class="modes">
@@ -394,7 +394,7 @@ footer a{ color:var(--papel); }
           <span class="msg">Elige un género.</span>
         </div>
 
-        <label class="if field" data-for="estelar anteojos creativo sobremesa" data-f="propuesta" id="fPropuesta">
+        <label class="if field" data-for="estelar anteojos creativo" data-f="propuesta" id="fPropuesta">
           <span class="lbl"><span id="lblProp">Cuéntanos del proyecto</span> <span class="count" id="cProp"></span></span>
           <textarea class="input" name="propuesta" placeholder="¿De qué trata? ¿Qué historia, pregunta o personaje hay en el centro? ¿Por qué tú y por qué ahora?"></textarea>
           <span class="msg">Cuéntanos tu idea en unas líneas.</span>
@@ -406,6 +406,19 @@ footer a{ color:var(--papel); }
           <span class="hint" id="hintDesc">En menos de 50 palabras. Si tuvieras que clasificarlo (ensayo, poesía, crónica…), ¿qué sería?</span>
           <span class="msg" id="msgDesc">Descríbelo en menos de 50 palabras.</span>
         </label>
+
+        <div class="if" data-for="sobremesa">
+          <label class="field" data-f="sobreTi">
+            <span class="lbl">Cuéntanos un poco de ti</span>
+            <textarea class="input" name="sobreTi" placeholder="¿A qué te dedicas? ¿Has escrito o publicado opiniones antes? ¿Qué temas te llaman más la atención?"></textarea>
+            <span class="msg">Cuéntanos de ti en un breve párrafo.</span>
+          </label>
+          <label class="field" data-f="whatsapp">
+            <span class="lbl">Número de WhatsApp <small>Opcional</small></span>
+            <input class="input" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="+52 55 1234 5678">
+            <span class="msg">Revisa el número; incluye la clave de país.</span>
+          </label>
+        </div>
 
         <div class="if field" data-for="estelar anteojos creativo sobremesa vv foto" data-f="archivo">
           <span class="lbl" id="lblFile">Adjunta tu texto</span>
@@ -557,7 +570,7 @@ function ajustarPaso3(){
   $("#chosen").innerHTML = `<span class="glyph ${s.color}${s.small ? " small" : ""}" aria-hidden="true">${s.glyph}</span>
     <span><small>Sección</small><b>${s.nombre}</b></span><button type="button" data-go="2">Cambiar</button>`;
 
-  const conModo = ["estelar","anteojos","creativo","sobremesa"].includes(s.id);
+  const conModo = ["estelar","anteojos","creativo"].includes(s.id);
   if (conModo){
     $("#fPropuesta").classList.toggle("on", modo === "propuesta" || modo === "texto");
     $("#lblProp").textContent = modo === "texto" ? "Cuéntanos brevemente de qué trata (opcional)" : "Cuéntanos del proyecto";
@@ -568,13 +581,17 @@ function ajustarPaso3(){
   const esFoto = s.id === "foto";
   $("#lblDesc").textContent = esFoto ? "Cuéntanos de tus fotografías" : "¿De qué escribiste?";
   $("#hintDesc").textContent = esFoto ? "En menos de 50 palabras: el tema, dónde y cuándo las tomaste." : "En menos de 50 palabras. Si tuvieras que clasificarlo (ensayo, poesía, crónica…), ¿qué sería?";
-  $("#lblFile").innerHTML = esFoto ? "Tus fotografías en un archivo ZIP" : (s.id === "vv" ? 'Si tienes el texto terminado, adjúntalo <small>Opcional</small>' : "Adjunta tu texto");
+  $("#lblFile").innerHTML = esFoto ? "Tus fotografías en un archivo ZIP" : ({
+    vv: 'Si tienes el texto terminado, adjúntalo <small>Opcional</small>',
+    sobremesa: "Un primer borrador de tu propuesta <small>De preferencia en Word, Google Docs o Pages</small>"
+  }[s.id] || "Adjunta tu texto");
   $("#dropHint").textContent = esFoto ? `Un solo .zip con las 15–20 fotos · hasta ${CONFIG.MAX_MB} MB` : `Word, PDF, Pages, RTF o TXT · hasta ${CONFIG.MAX_MB} MB`;
   $("#fileInput").accept = esFoto ? ".zip,application/zip" : ".doc,.docx,.pdf,.odt,.rtf,.txt,.pages,.md";
   $("#sub3").textContent = {
     arte:"Cuéntanos qué te gustaría hacer y muéstranos tu trabajo.",
     foto:"Unas líneas sobre la serie y las fotos. Nosotros nos encargamos del resto.",
-    vv:"Unas líneas bastan para que sepamos dónde puede vivir tu texto."
+    vv:"Unas líneas bastan para que sepamos dónde puede vivir tu texto.",
+    sobremesa:"Queremos conocerte y leer un primer borrador de tu columna."
   }[s.id] || "Lo más importante: qué quieres contar y por qué ahora.";
   contar();
 }
@@ -600,7 +617,7 @@ function validar(p){
   if (p === 2) chk("seccion", !!seccion());
   if (p === 3){
     const s = seccion().id, modo = val("modo");
-    if (["estelar","anteojos","creativo","sobremesa"].includes(s)){
+    if (["estelar","anteojos","creativo"].includes(s)){
       chk("modo", !!modo);
       chk("titulo", val("titulo").length > 0);
       if (s === "creativo") chk("genero", !!val("genero") && (val("genero") !== "Otro" || val("generoOtro")));
@@ -608,6 +625,12 @@ function validar(p){
       else marcar("propuesta", false);
       if (modo === "texto") chk("archivo", !!archivo);
       else marcar("archivo", false);
+    }
+    if (s === "sobremesa"){
+      chk("sobreTi", palabras(val("sobreTi")) >= 5);
+      chk("whatsapp", !val("whatsapp") || (val("whatsapp").match(/\d/g) || []).length >= 7);
+      $("#msgFile").textContent = "Sube un primer borrador de tu propuesta.";
+      chk("archivo", !!archivo);
     }
     if (s === "vv" || s === "foto"){
       const n = palabras(val("descripcion"));
@@ -750,7 +773,8 @@ function datos(){
     suscripcion: val("suscripcion"), bio: val("bio"), enlace: val("enlace"),
     seccion: s.id, seccionNombre: s.nombre
   };
-  if (["estelar","anteojos","creativo","sobremesa"].includes(s.id)){
+  if (s.id === "sobremesa"){ d.sobreTi = val("sobreTi"); d.whatsapp = val("whatsapp"); }
+  if (["estelar","anteojos","creativo"].includes(s.id)){
     d.modo = val("modo"); d.titulo = val("titulo"); d.propuesta = val("propuesta");
     if (s.id === "creativo") d.genero = val("genero") === "Otro" ? val("generoOtro") : val("genero");
   }
@@ -768,6 +792,7 @@ function repaso(){
     ["Sección", d.seccionNombre, 2],
     ["Tipo", d.modo ? (d.modo === "texto" ? "Texto terminado" : "Propuesta (idea)") : "", 3],
     ["Género", d.genero, 3], ["Título", d.titulo, 3], ["Propuesta", d.propuesta, 3],
+    ["Sobre ti", d.sobreTi, 3], ["WhatsApp", d.whatsapp, 3],
     ["Descripción", d.descripcion, 3], ["Qué te gustaría hacer", d.arte, 3], ["Portafolio", d.portafolio, 3],
     ["Archivo", archivo ? `${archivo.name} · ${fmtMB(archivo.size)}` : "", 3], ["Enlace a las fotos", d.enlaceFotos, 3]
   ].filter(f => f[1]);
@@ -842,7 +867,7 @@ function enviar(){
 
 /* ---------- otra propuesta ---------- */
 $("#again").addEventListener("click", () => {
-  const conservar = ["nombre","correo","pais","bio","enlace"].map(n => [n, val(n)]);
+  const conservar = ["nombre","correo","pais","bio","enlace","whatsapp"].map(n => [n, val(n)]);
   const sus = val("suscripcion");
   form.reset(); archivo = null; $("#fileCard").classList.remove("on");
   conservar.forEach(([n, v]) => form.elements[n].value = v);
@@ -852,7 +877,7 @@ $("#again").addEventListener("click", () => {
 });
 
 /* ---------- borrador local ---------- */
-const CAMPOS = ["nombre","correo","pais","suscripcion","bio","enlace","seccion","modo","titulo","genero","generoOtro","propuesta","descripcion","enlaceFotos","arte","portafolio"];
+const CAMPOS = ["nombre","correo","pais","suscripcion","bio","enlace","seccion","modo","titulo","genero","generoOtro","propuesta","descripcion","enlaceFotos","arte","portafolio","sobreTi","whatsapp"];
 function guardar(){
   try { const o = {}; CAMPOS.forEach(n => o[n] = val(n)); o.paso = Math.min(paso, 3); localStorage.setItem(CONFIG.CLAVE_LOCAL, JSON.stringify(o)); } catch {}
 }
