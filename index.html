@@ -365,16 +365,32 @@ footer a{ color:var(--papel); }
         <p class="sub" id="sub3">Lo más importante: qué quieres contar y por qué ahora.</p>
         <div class="chosen" id="chosen"></div>
 
-        <!-- Idea o texto listo -->
-        <div class="if" data-for="estelar anteojos creativo">
-          <div class="field" data-f="modo" role="radiogroup" aria-labelledby="lblModo">
-            <span class="lbl" id="lblModo">¿Tienes una idea o un texto terminado?</span>
-            <div class="modes">
-              <label class="mode"><input type="radio" name="modo" value="propuesta"><span class="box"><b>Tengo una idea</b><small>Te la cuento en unas líneas.</small></span></label>
-              <label class="mode"><input type="radio" name="modo" value="texto"><span class="box"><b>Tengo el texto listo</b><small>Lo adjunto aquí mismo.</small></span></label>
-            </div>
-            <span class="msg">Elige una opción.</span>
+        <div class="if" data-for="sobremesa">
+          <label class="field" data-f="sobreTi">
+            <span class="lbl">Cuéntanos un poco de ti</span>
+            <textarea class="input" name="sobreTi" placeholder="¿A qué te dedicas? ¿Has escrito o publicado opiniones antes? ¿Qué temas te llaman más la atención?"></textarea>
+            <span class="msg">Cuéntanos un poco de ti.</span>
+          </label>
+          <label class="field" data-f="whatsapp">
+            <span class="lbl">Número de WhatsApp <small>Opcional</small></span>
+            <input class="input" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="+52 55 1234 5678">
+          </label>
+          <label class="field" data-f="enlacesPrevios">
+            <span class="lbl">Comparte enlaces a tu trabajo previo publicado, de ser el caso <small>Opcional</small></span>
+            <textarea class="input" name="enlacesPrevios" style="min-height:96px" placeholder="Blogs, redes sociales o medios. Uno por línea."></textarea>
+          </label>
+        </div>
+
+        <!-- Idea o texto listo (en la Sobremesa: propuesta o borrador) -->
+        <div class="if field" data-for="estelar anteojos creativo sobremesa" data-f="modo" role="radiogroup" aria-labelledby="lblModo">
+          <span class="lbl" id="lblModo">¿Tienes una idea o un texto terminado?</span>
+          <div class="modes">
+            <label class="mode"><input type="radio" name="modo" value="propuesta"><span class="box"><b id="modoPropB">Tengo una idea</b><small id="modoPropS">Te la cuento en unas líneas.</small></span></label>
+            <label class="mode"><input type="radio" name="modo" value="texto"><span class="box"><b id="modoTextoB">Tengo el texto listo</b><small id="modoTextoS">Lo adjunto aquí mismo.</small></span></label>
           </div>
+          <span class="msg">Elige una opción.</span>
+        </div>
+        <div class="if" data-for="estelar anteojos creativo">
           <label class="field" data-f="titulo">
             <span class="lbl">Título <small>Aunque sea provisional</small></span>
             <input class="input" name="titulo" placeholder="El título de tu texto">
@@ -394,35 +410,18 @@ footer a{ color:var(--papel); }
           <span class="msg">Elige un género.</span>
         </div>
 
-        <label class="if field" data-for="estelar anteojos creativo" data-f="propuesta" id="fPropuesta">
+        <label class="if field" data-for="estelar anteojos creativo sobremesa" data-f="propuesta" id="fPropuesta">
           <span class="lbl"><span id="lblProp">Cuéntanos del proyecto</span> <span class="count" id="cProp"></span></span>
           <textarea class="input" name="propuesta" placeholder="¿De qué trata? ¿Qué historia, pregunta o personaje hay en el centro? ¿Por qué tú y por qué ahora?"></textarea>
-          <span class="msg">Cuéntanos tu idea en unas líneas.</span>
+          <span class="msg">Cuéntanos tu idea.</span>
         </label>
 
         <label class="if field" data-for="vv foto" data-f="descripcion">
           <span class="lbl"><span id="lblDesc">¿De qué escribiste?</span> <span class="count" id="cDesc">0 / 50 palabras</span></span>
           <textarea class="input" name="descripcion" style="min-height:110px"></textarea>
-          <span class="hint" id="hintDesc">En menos de 50 palabras. Si tuvieras que clasificarlo (ensayo, poesía, crónica…), ¿qué sería?</span>
-          <span class="msg" id="msgDesc">Descríbelo en menos de 50 palabras.</span>
+          <span class="hint" id="hintDesc">Unas líneas bastan (sugerimos menos de 50 palabras). Si tuvieras que clasificarlo (ensayo, poesía, crónica…), ¿qué sería?</span>
+          <span class="msg" id="msgDesc">Cuéntanos de qué se trata.</span>
         </label>
-
-        <div class="if" data-for="sobremesa">
-          <label class="field" data-f="sobreTi">
-            <span class="lbl">Cuéntanos un poco de ti</span>
-            <textarea class="input" name="sobreTi" placeholder="¿A qué te dedicas? ¿Has escrito o publicado opiniones antes? ¿Qué temas te llaman más la atención?"></textarea>
-            <span class="msg">Cuéntanos de ti en un breve párrafo.</span>
-          </label>
-          <label class="field" data-f="whatsapp">
-            <span class="lbl">Número de WhatsApp <small>Opcional</small></span>
-            <input class="input" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="+52 55 1234 5678">
-            <span class="msg">Revisa el número; incluye la clave de país.</span>
-          </label>
-          <label class="field" data-f="enlacesPrevios">
-            <span class="lbl">Comparte enlaces a tu trabajo previo publicado, de ser el caso <small>Opcional</small></span>
-            <textarea class="input" name="enlacesPrevios" style="min-height:96px" placeholder="Blogs, redes sociales o medios. Uno por línea."></textarea>
-          </label>
-        </div>
 
         <div class="if field" data-for="estelar anteojos creativo sobremesa vv foto" data-f="archivo">
           <span class="lbl" id="lblFile">Adjunta tu texto</span>
@@ -574,10 +573,18 @@ function ajustarPaso3(){
   $("#chosen").innerHTML = `<span class="glyph ${s.color}${s.small ? " small" : ""}" aria-hidden="true">${s.glyph}</span>
     <span><small>Sección</small><b>${s.nombre}</b></span><button type="button" data-go="2">Cambiar</button>`;
 
-  const conModo = ["estelar","anteojos","creativo"].includes(s.id);
+  const conModo = ["estelar","anteojos","creativo","sobremesa"].includes(s.id);
   if (conModo){
-    $("#fPropuesta").classList.toggle("on", modo === "propuesta" || modo === "texto");
-    $("#lblProp").textContent = modo === "texto" ? "Cuéntanos brevemente de qué trata (opcional)" : "Cuéntanos del proyecto";
+    const sob = s.id === "sobremesa";
+    $("#lblModo").textContent = sob ? "¿Tienes una propuesta o un borrador?" : "¿Tienes una idea o un texto terminado?";
+    $("#modoPropB").textContent = sob ? "Tengo una propuesta" : "Tengo una idea";
+    $("#modoPropS").textContent = sob ? "Te cuento la idea del texto que quiero escribir." : "Te la cuento en unas líneas.";
+    $("#modoTextoB").textContent = sob ? "Tengo un borrador" : "Tengo el texto listo";
+    $("#modoTextoS").textContent = sob ? "Adjunto el documento." : "Lo adjunto aquí mismo.";
+    // en la Sobremesa el borrador ya trae el texto: no se pide resumen
+    $("#fPropuesta").classList.toggle("on", modo === "propuesta" || (modo === "texto" && !sob));
+    $("#lblProp").textContent = modo === "texto" ? "Cuéntanos brevemente de qué trata (opcional)"
+      : sob ? "Tu propuesta: ¿qué texto quieres escribir?" : "Cuéntanos del proyecto";
     $("[data-f=archivo]").classList.toggle("on", modo === "texto");
   }
   $("#generoOtro").classList.toggle("on", val("genero") === "Otro");
@@ -586,10 +593,10 @@ function ajustarPaso3(){
 
   const esFoto = s.id === "foto";
   $("#lblDesc").textContent = esFoto ? "Cuéntanos de tus fotografías" : "¿De qué escribiste?";
-  $("#hintDesc").textContent = esFoto ? "En menos de 50 palabras: el tema, dónde y cuándo las tomaste." : "En menos de 50 palabras. Si tuvieras que clasificarlo (ensayo, poesía, crónica…), ¿qué sería?";
+  $("#hintDesc").textContent = esFoto ? "Unas líneas (sugerimos menos de 50 palabras): el tema, dónde y cuándo las tomaste." : "Unas líneas bastan (sugerimos menos de 50 palabras). Si tuvieras que clasificarlo (ensayo, poesía, crónica…), ¿qué sería?";
   $("#lblFile").innerHTML = esFoto ? "Tus fotografías en un archivo ZIP" : ({
     vv: 'Si tienes el texto terminado, adjúntalo <small>Opcional</small>',
-    sobremesa: "Un primer borrador de tu propuesta <small>De preferencia en Word, Google Docs o Pages</small>"
+    sobremesa: "Tu borrador <small>De preferencia en Word, Google Docs o Pages</small>"
   }[s.id] || "Adjunta tu texto");
   $("#dropHint").textContent = esFoto ? `Un solo .zip con las 15–20 fotos · hasta ${CONFIG.MAX_MB} MB` : `Word, PDF, Pages, RTF o TXT · hasta ${CONFIG.MAX_MB} MB`;
   $("#fileInput").accept = esFoto ? ".zip,application/zip" : ".doc,.docx,.pdf,.odt,.rtf,.txt,.pages,.md";
@@ -597,7 +604,7 @@ function ajustarPaso3(){
     arte:"Cuéntanos qué te gustaría hacer y muéstranos tu trabajo.",
     foto:"Unas líneas sobre la serie y las fotos. Nosotros nos encargamos del resto.",
     vv:"Unas líneas bastan para que sepamos dónde puede vivir tu texto.",
-    sobremesa:"Queremos conocerte y leer un primer borrador de tu columna."
+    sobremesa:"Queremos conocerte y saber qué quieres escribir."
   }[s.id] || "Lo más importante: qué quieres contar y por qué ahora.";
   contar();
 }
@@ -614,9 +621,9 @@ function validar(p){
   const errores = [];
   const chk = (f, ok) => { if (!marcar(f, !ok)) errores.push(f); };
   if (p === 1){
-    chk("nombre", val("nombre").length > 1);
+    chk("nombre", !!val("nombre"));
     chk("correo", reMail.test(val("correo")));
-    chk("pais", val("pais").length > 1);
+    chk("pais", !!val("pais"));
     chk("suscripcion", !!val("suscripcion"));
     chk("enlace", !val("enlace") || reUrl(normUrl("enlace")));
   }
@@ -627,21 +634,20 @@ function validar(p){
       chk("modo", !!modo);
       chk("titulo", val("titulo").length > 0);
       if (s === "creativo") chk("genero", !!val("genero") && (val("genero") !== "Otro" || val("generoOtro")));
-      if (modo === "propuesta") chk("propuesta", palabras(val("propuesta")) >= 5);
+    }
+    if (s === "sobremesa"){
+      chk("sobreTi", !!val("sobreTi"));
+      chk("modo", !!modo);
+      $("#msgFile").textContent = "Adjunta tu borrador.";
+    }
+    if (["estelar","anteojos","creativo","sobremesa"].includes(s)){
+      if (modo === "propuesta") chk("propuesta", !!val("propuesta"));
       else marcar("propuesta", false);
       if (modo === "texto") chk("archivo", !!archivo);
       else marcar("archivo", false);
     }
-    if (s === "sobremesa"){
-      chk("sobreTi", palabras(val("sobreTi")) >= 5);
-      chk("whatsapp", !val("whatsapp") || (val("whatsapp").match(/\d/g) || []).length >= 7);
-      $("#msgFile").textContent = "Sube un primer borrador de tu propuesta.";
-      chk("archivo", !!archivo);
-    }
     if (s === "vv" || s === "foto"){
-      const n = palabras(val("descripcion"));
-      $("#msgDesc").textContent = n > 50 ? `Son ${n} palabras; recórtalo a 50 o menos.` : "Descríbelo en menos de 50 palabras.";
-      chk("descripcion", n > 0 && n <= 50);
+      chk("descripcion", !!val("descripcion"));
       if (s === "foto"){
         $("#msgFile").textContent = "Adjunta un .zip o pega abajo un enlace a tus fotos.";
         chk("archivo", !!archivo || reUrl(normUrl("enlaceFotos")));
@@ -649,7 +655,7 @@ function validar(p){
       } else marcar("archivo", false);
     }
     if (s === "arte"){
-      chk("arte", val("arte").length > 3);
+      chk("arte", !!val("arte"));
       chk("portafolio", reUrl(normUrl("portafolio")));
     }
   }
@@ -779,7 +785,10 @@ function datos(){
     suscripcion: val("suscripcion"), bio: val("bio"), enlace: val("enlace"),
     seccion: s.id, seccionNombre: s.nombre
   };
-  if (s.id === "sobremesa"){ d.sobreTi = val("sobreTi"); d.whatsapp = val("whatsapp"); d.enlacesPrevios = val("enlacesPrevios"); }
+  if (s.id === "sobremesa"){
+    d.sobreTi = val("sobreTi"); d.whatsapp = val("whatsapp"); d.enlacesPrevios = val("enlacesPrevios");
+    d.modo = val("modo"); if (d.modo === "propuesta") d.propuesta = val("propuesta");
+  }
   if (["estelar","anteojos","creativo"].includes(s.id)){
     d.modo = val("modo"); d.titulo = val("titulo"); d.propuesta = val("propuesta");
     if (s.id === "creativo") d.genero = val("genero") === "Otro" ? val("generoOtro") : val("genero");
@@ -796,7 +805,7 @@ function repaso(){
     ["Suscripción", d.suscripcion === "ya-suscrito" ? "Ya está suscrito" : "Suscribir con este correo", 1],
     ["Biografía", d.bio, 1], ["Dónde leerte", d.enlace, 1],
     ["Sección", d.seccionNombre, 2],
-    ["Tipo", d.modo ? (d.modo === "texto" ? "Texto terminado" : "Propuesta (idea)") : "", 3],
+    ["Tipo", d.modo ? (d.modo === "texto" ? (d.seccion === "sobremesa" ? "Borrador" : "Texto terminado") : "Propuesta (idea)") : "", 3],
     ["Género", d.genero, 3], ["Título", d.titulo, 3], ["Propuesta", d.propuesta, 3],
     ["Sobre ti", d.sobreTi, 3], ["WhatsApp", d.whatsapp, 3], ["Trabajo previo", d.enlacesPrevios, 3],
     ["Descripción", d.descripcion, 3], ["Qué te gustaría hacer", d.arte, 3], ["Portafolio", d.portafolio, 3],
@@ -817,7 +826,8 @@ function paraRespaldo(d){
     propuesta: [
       "Sobre la persona:\n" + d.sobreTi,
       d.whatsapp && "WhatsApp: " + d.whatsapp,
-      d.enlacesPrevios && "Trabajo previo publicado:\n" + d.enlacesPrevios
+      d.enlacesPrevios && "Trabajo previo publicado:\n" + d.enlacesPrevios,
+      d.propuesta && "La propuesta:\n" + d.propuesta
     ].filter(Boolean).join("\n\n")
   };
 }

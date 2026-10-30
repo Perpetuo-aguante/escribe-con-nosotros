@@ -11,9 +11,11 @@ Formulario para que autores manden propuestas a Perpetuo. Reemplaza al Google Fo
 2. **Sección**: El estelar, Los anteojos, El creativo, La sobremesa, Foto ensayo, Vainas varias, Diseño y arte.
 3. **Tu propuesta**: los campos cambian según la sección (son los mismos saltos que tenía el Google Form).
    - Estelar / Anteojos / Creativo: idea o texto listo, título, propuesta o archivo (Creativo pide además el género).
-   - Sobremesa (igual que el Google Form «Propuestas para la Sobremesa»): un párrafo sobre la persona, WhatsApp y enlaces a trabajo previo (opcionales) y un primer borrador obligatorio. Si n8n falla, el formulario acomoda esos datos en título, biografía y propuesta para que el respaldo de Apps Script no pierda nada.
-   - Vainas varias: descripción de 50 palabras como máximo y archivo opcional.
-   - Foto ensayo: descripción de 50 palabras como máximo, más un .zip o un enlace a las fotos.
+   - Sobremesa: un párrafo sobre la persona, WhatsApp y enlaces a trabajo previo (opcionales) y la pregunta «¿Tienes una propuesta o un borrador?»: con propuesta escribe la idea del texto; con borrador adjunta el documento. Si n8n falla, el formulario acomoda esos datos en título, biografía y propuesta para que el respaldo de Apps Script no pierda nada.
+   - Vainas varias: descripción breve (se sugieren 50 palabras, sin bloquear) y archivo opcional.
+   - Foto ensayo: descripción breve (se sugieren 50 palabras, sin bloquear), más un .zip o un enlace a las fotos.
+
+Ningún campo exige un mínimo ni un máximo de caracteres o palabras: los obligatorios solo tienen que no estar vacíos.
    - Diseño y arte: qué quiere hacer y su portafolio.
 4. **Envío**: repaso de las respuestas, luego el envío y una pantalla con el folio.
 
@@ -33,7 +35,7 @@ Cualquier respuesta 2xx cuenta como recibido; un 413 muestra el aviso de archivo
 Workflow **"Escribe con nosotros · Propuestas (webhook → Drive + Textos)"** en esperpetuo.app.n8n.cloud:
 1. Valida los campos (nombre, correo y sección) y responde 400 si falta alguno.
 2. Si trae archivo, lo sube a la carpeta de Drive **"Escribe con nosotros · Archivos"**.
-3. Crea una ficha en **📖 Textos** (Notion) con Nombre = título, Autor, Correo, País, Biografía y Enlace del texto (el archivo en Drive, o el enlace a las fotos o al portafolio). La propuesta completa, el folio y los demás datos van dentro de la página.
+3. Crea una ficha en **📖 Textos** (Notion) con Nombre = título, Autor, Correo, País, Biografía, Propuesta (lo que escribió: la propuesta o, en Vainas varias, Foto ensayo y Diseño y arte, la descripción) y Enlace del texto (el archivo en Drive, o el enlace a las fotos o al portafolio). La propuesta completa, el folio y los demás datos van dentro de la página.
 4. Responde 200 `{ok, folio}`. Si la sección es Sobremesa, además avisa en **#sobremesa** (Slack) con la ficha, el borrador y el WhatsApp.
    Si Notion falla, responde 500 y el formulario le pide a la persona intentar de nuevo.
 
